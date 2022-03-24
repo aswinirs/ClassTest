@@ -17,8 +17,8 @@ class ResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         /*
-         * TODO 5: Inflate the respective layout, retrieve the intents (keys, value pairs)
-         *   you passed from previous activity to display and initialize the views.
+         * TODO 5: Inflate the respective layout for this activity, retrieve the intents (keys, value pairs)
+         *   you passed from previous activity to display in the result activity and initialize the views.
          */
     }
     @SuppressLint("SetTextI18n")
