@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
             /*
             * TODO 1: Launch play activity to start playing the quiz.
              */
+            val intent = Intent(this@MainActivity, PlayActivity::class.java)
+            startActivity(intent)
         }
     }
 }

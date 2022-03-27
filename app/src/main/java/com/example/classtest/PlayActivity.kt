@@ -23,7 +23,8 @@ class PlayActivity : AppCompatActivity() {
     private var countDownTimer: CountDownTimer? = null
     private val countDownInMilliSecond: Long = 30000
     private val countDownInterval: Long = 1000
-
+    private lateinit var  builder: AlertDialog.Builder
+    var alertDialog: AlertDialog? = null
     /**
      * TODO 2: Set the timer color to RED, when the time left is less than 10000 milliseconds.
      *  If otherwise it should should be BLUE in color.
@@ -107,7 +108,15 @@ class PlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         activityPlayBinding = ActivityPlayBinding.inflate(layoutInflater)
         setContentView(activityPlayBinding.root)
+        builder = AlertDialog.Builder(this@PlayActivity)
         initViews()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        if (alertDialog != null) {
+            alertDialog!!.dismiss()
+            alertDialog = null
+        }
     }
     @SuppressLint("SetTextI18n")
     private fun showNextQuestion() {
@@ -125,6 +134,12 @@ class PlayActivity : AppCompatActivity() {
                 choice4.text = options[qIndex * 4 + 3] //  2*4+3=11
             } else {
                 score = correct
+                val intent = Intent(this@PlayActivity, ResultActivity::class.java)
+                intent.putExtra("correct", correct)
+                intent.putExtra("wrong", wrong)
+                intent.putExtra("skip", skip)
+                startActivity(intent)
+                finish()
                 /* TODO 3: Navigate to result activity and also pass along the information such
                     as number of correct answers, wrong answers, and skipped questions. Finish this activity
                      after starting next activity. */
@@ -207,36 +222,34 @@ class PlayActivity : AppCompatActivity() {
     }
     @SuppressLint("SetTextI18n")
     private fun correctAlertDialog() {
-        val builder = AlertDialog.Builder(this@PlayActivity)
         val view = LayoutInflater.from(this@PlayActivity).inflate(R.layout.right_answer_layout, null)
         builder.setView(view)
         val tvScore = view.findViewById<TextView>(R.id.tvDialog_score)
         val correctOkBtn = view.findViewById<Button>(R.id.correct_ok)
         tvScore.text = "Score : $correct"
-        val alertDialog = builder.create()
+        alertDialog = builder.create()
         correctOkBtn.setOnClickListener {
             timeLeftMilliSeconds = countDownInMilliSecond
             statCountDownTimer()
-            alertDialog.dismiss()
+            alertDialog!!.dismiss()
         }
-        alertDialog.show()
+        alertDialog!!.show()
     }
     @SuppressLint("SetTextI18n")
     private fun wrongAlertDialog() {
-        val builder = AlertDialog.Builder(this@PlayActivity)
         val view = LayoutInflater.from(this@PlayActivity).inflate(R.layout.wrong_answer_layout, null)
         builder.setView(view)
         val tvWrongDialogCorrectAns = view.findViewById<TextView>(R.id.tv_wrongDialog_correctAns)
         val wrongOk = view.findViewById<Button>(R.id.wrong_ok)
         tvWrongDialogCorrectAns.text = "Correct Answer : " + answer[qIndex]
-        val alertDialog = builder.create()
+        alertDialog = builder.create()
         wrongOk.setOnClickListener {
             timeLeftMilliSeconds =
                 countDownInMilliSecond
             statCountDownTimer()
-            alertDialog.dismiss()
+            alertDialog?.dismiss()
         }
-        alertDialog.show()
+        alertDialog?.show()
     }
     @SuppressLint("SetTextI18n")
     private fun timeOverAlertDialog() {
@@ -244,5 +257,15 @@ class PlayActivity : AppCompatActivity() {
         * TODO 4: Similar to correctAlertDialog, wrongAlertDialog, implement the logic to inflate and show
         *  idle_state_time_out_layout.
         */
+        val view = LayoutInflater.from(this@PlayActivity).inflate(R.layout.idle_state_time_out_layout, null)
+        builder.setView(view)
+        val timeOverOk = view.findViewById<Button>(R.id.timeOver_ok)
+        alertDialog = builder.create()
+        timeOverOk.setOnClickListener {
+            timeLeftMilliSeconds = countDownInMilliSecond
+            statCountDownTimer()
+            alertDialog?.dismiss()
+        }
+        alertDialog?.show()
     }
 }

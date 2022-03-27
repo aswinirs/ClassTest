@@ -16,6 +16,12 @@ class ResultActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activityResultBinding = ActivityResultBinding.inflate(layoutInflater)
+        setContentView(activityResultBinding.root)
+        totalScore = intent.extras!!.getInt("correct")
+        wrong = intent.extras!!.getInt("wrong")
+        skip = intent.extras!!.getInt("skip")
+        initializeViews()
         /*
          * TODO 5: Inflate the respective layout for this activity, retrieve the intents (keys, value pairs)
          *   you passed from previous activity to display in the result activity and initialize the views.
@@ -26,8 +32,16 @@ class ResultActivity : AppCompatActivity() {
         activityResultBinding.apply {
             score.text = "Score: $totalScore"
             right.text = "Correct: $totalScore"
-            wrong.text = "Wrong: $wrong"
-            skip.text = "Skip: $skip"
+            tvwrong.text = "Wrong: $wrong"
+            tvskip.text = "Skip: $skip"
+
+            if (totalScore >= 6) {
+                emojiReactionImg.setImageResource(R.drawable.happy_face)
+                Toast.makeText(this@ResultActivity, "Wow Great", Toast.LENGTH_SHORT).show()
+            } else {
+                emojiReactionImg.setImageResource(R.drawable.blank_face)
+                Toast.makeText(this@ResultActivity, "Need Improvement", Toast.LENGTH_SHORT).show()
+            }
             /* TODO 6:
                 If the total score is greater than 6 then set the emoji with happy_face and
                  display a Toast message "Wow Great"
